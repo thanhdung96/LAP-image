@@ -3,7 +3,7 @@
 # Prepare our container for initial boot.
 
 # Where does our MySQL data live?
-VOLUME_HOME="/var/lib/mysql"
+# VOLUME_HOME="/var/lib/mysql"
 
 #######################################
 # Use sed to replace apache php.ini values for a given PHP version.
@@ -52,15 +52,15 @@ if [ -n "$APACHE_ROOT" ];then
     rm -f /var/www/html && ln -s "/app/${APACHE_ROOT}" /var/www/html
 fi
 
-echo "Editing phpmyadmin config"
-sed -i "s/cfg\['blowfish_secret'\] = ''/cfg['blowfish_secret'] = '`date | md5sum`'/" /var/www/phpmyadmin/config.inc.php
+# echo "Editing phpmyadmin config"
+# sed -i "s/cfg\['blowfish_secret'\] = ''/cfg['blowfish_secret'] = '`date | md5sum`'/" /var/www/phpmyadmin/config.inc.php
 
-echo "Setting up MySQL directories"
-mkdir -p /var/run/mysqld
+# echo "Setting up MySQL directories"
+# mkdir -p /var/run/mysqld
 
 # Setup user and permissions for MySQL and Apache
-chmod -R 770 /var/lib/mysql
-chmod -R 770 /var/run/mysqld
+# chmod -R 770 /var/lib/mysql
+# chmod -R 770 /var/run/mysqld
 
 if [ -n "$VAGRANT_OSX_MODE" ];then
     echo "Setting up users and groups"
@@ -74,42 +74,42 @@ else
     chown -R www-data:staff /app
 fi
 
-echo "Allowing Apache/PHP to write to MySQL"
-chown -R www-data:staff /var/lib/mysql
-chown -R www-data:staff /var/run/mysqld
-chown -R www-data:staff /var/log/mysql
+# echo "Allowing Apache/PHP to write to MySQL"
+# chown -R www-data:staff /var/lib/mysql
+# chown -R www-data:staff /var/run/mysqld
+# chown -R www-data:staff /var/log/mysql
 
 # Listen only on IPv4 addresses
 sed -i 's/^Listen .*/Listen 0.0.0.0:80/' /etc/apache2/ports.conf
 
-if [ -e /var/run/mysqld/mysqld.sock ];then
-    echo "Removing MySQL socket"
-    rm /var/run/mysqld/mysqld.sock
-fi
+# if [ -e /var/run/mysqld/mysqld.sock ];then
+#     echo "Removing MySQL socket"
+#     rm /var/run/mysqld/mysqld.sock
+# fi
 
-echo "Editing MySQL config"
-sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
-sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
-sed -i "s/user.*/user = www-data/" /etc/mysql/mysql.conf.d/mysqld.cnf
+# echo "Editing MySQL config"
+# sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+# sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+# sed -i "s/user.*/user = www-data/" /etc/mysql/mysql.conf.d/mysqld.cnf
 
-if [[ ! -d $VOLUME_HOME/mysql ]]; then
-    echo "=> An empty or uninitialized MySQL volume is detected in $VOLUME_HOME"
-    echo "=> Installing MySQL ..."
+# if [[ ! -d $VOLUME_HOME/mysql ]]; then
+#     echo "=> An empty or uninitialized MySQL volume is detected in $VOLUME_HOME"
+#     echo "=> Installing MySQL ..."
 
-    # Try the 'preferred' solution
-    mysqld --initialize-insecure --innodb-flush-log-at-trx-commit=0 --skip-log-bin
+#     # Try the 'preferred' solution
+#     mysqld --initialize-insecure --innodb-flush-log-at-trx-commit=0 --skip-log-bin
 
-    # IF that didn't work
-    if [ $? -ne 0 ]; then
-        # Fall back to the 'depreciated' solution
-        mysql_install_db > /dev/null 2>&1
-    fi
+#     # IF that didn't work
+#     if [ $? -ne 0 ]; then
+#         # Fall back to the 'depreciated' solution
+#         mysql_install_db > /dev/null 2>&1
+#     fi
 
-    echo "=> Done!"
-    /create_mysql_users.sh
-else
-    echo "=> Using an existing volume of MySQL"
-fi
+#     echo "=> Done!"
+#     /create_mysql_users.sh
+# else
+#     echo "=> Using an existing volume of MySQL"
+# fi
 
 echo "Starting supervisord"
 exec supervisord -n
