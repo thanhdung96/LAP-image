@@ -1,6 +1,6 @@
 FROM phusion/baseimage:focal-1.1.0
 MAINTAINER Dung DUONG <dung.duong@mati.com.vn>
-ENV REFRESHED_AT 22-03-2023
+ENV REFRESHED_AT 24-03-2023
 
 # FROM phusion/baseimage:focal-1.1.0
 # MAINTAINER Matthew Rayner <hello@rayner.io>
@@ -33,10 +33,10 @@ RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
   apt-get -y clean && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Install supervisor 4
-RUN curl -L https://pypi.io/packages/source/s/supervisor/supervisor-${SUPERVISOR_VERSION}.tar.gz | tar xvz && \
-  cd supervisor-${SUPERVISOR_VERSION}/ && \
-  python3 setup.py install
+# # Install supervisor 4
+# RUN curl -L https://pypi.io/packages/source/s/supervisor/supervisor-${SUPERVISOR_VERSION}.tar.gz | tar xvz && \
+#   cd supervisor-${SUPERVISOR_VERSION}/ && \
+#   python3 setup.py install
 
 # Add image configuration and scripts
 ADD ./supporting_files/start-apache2.sh /start-apache2.sh
