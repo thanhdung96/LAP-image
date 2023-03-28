@@ -65,5 +65,5 @@ fi
 # Listen only on IPv4 addresses
 sed -i 's/^Listen .*/Listen 0.0.0.0:80/' /etc/apache2/ports.conf
 
-# echo "Starting supervisord"
-# exec supervisord -n
+echo "Starting supervisord"
+exec supervisord -n

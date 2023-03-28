@@ -34,9 +34,9 @@ RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # # Install supervisor 4
-# RUN curl -L https://pypi.io/packages/source/s/supervisor/supervisor-${SUPERVISOR_VERSION}.tar.gz | tar xvz && \
-#   cd supervisor-${SUPERVISOR_VERSION}/ && \
-#   python3 setup.py install
+RUN curl -L https://pypi.io/packages/source/s/supervisor/supervisor-${SUPERVISOR_VERSION}.tar.gz | tar xvz && \
+  cd supervisor-${SUPERVISOR_VERSION}/ && \
+  python3 setup.py install
 
 # Add image configuration and scripts
 ADD ./supporting_files/start-apache2.sh /start-apache2.sh
@@ -55,14 +55,14 @@ ADD ./supporting_files/apache_default /etc/apache2/sites-available/000-default.c
 RUN a2enmod rewrite
 
 # Configure /app folder with sample app
-RUN mkdir -p /app && rm -fr /var/www/html && ln -s /app/public /var/www/html
+RUN mkdir -p /app && rm -fr /var/www/html && ln -s /app/ /var/www/html
 ADD ./app/ /app
 
 #Environment variables to configure php
 ENV PHP_UPLOAD_MAX_FILESIZE 10M
 ENV PHP_POST_MAX_SIZE 10M
 
-# Add volumes for the app and MySql
+# Add volumes for the app
 VOLUME  ["/app"]
 
 EXPOSE 80
